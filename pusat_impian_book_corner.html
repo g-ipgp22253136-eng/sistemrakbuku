@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perpustakaan Cilik | Sistem Pinjam & Pulang Buku</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f0fdf4;
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+      background-size: 24px 24px;
+      color: #1e293b;
+    }
+    .font-cute {
+      font-family: 'Fredoka', cursive, sans-serif;
+    }
+    .btn-bounce {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-bounce:hover {
+      transform: translateY(-3px) scale(1.01);
+    }
+    .btn-bounce:active {
+      transform: translateY(1px) scale(0.99);
+    }
+    .cute-card {
+      border-radius: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    }
+    .lang-btn.active {
+      background-color: #fde047;
+      color: #065f46;
+      border-color: #fde047;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-16">
+
+  <!-- Header Comel dengan Switcher Bahasa -->
+  <header class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-yellow-300 text-emerald-900 rounded-3xl flex items-center justify-center text-2xl shadow-inner font-bold border-2 border-white animate-bounce">
+          📖
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-cute font-bold tracking-wide" id="appTitle">Pusat Impian Book Corner</h1>
+          <p class="text-xs text-emerald-100 font-medium" id="appSubtitle">Stesen Self-Service Peminjaman & Pemulangan Buku 🐾</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions & Language Switcher -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Language Switcher Buttons -->
+        <div class="bg-emerald-800/80 p-1 rounded-2xl flex border border-emerald-500 text-xs font-semibold">
+          <button onclick="setLanguage('ms')" id="lang-ms" class="lang-btn active px-2.5 py-1 rounded-xl transition">BM</button>
+          <button onclick="setLanguage('zh')" id="lang-zh" class="lang-btn px-2.5 py-1 rounded-xl text-emerald-100 hover:text-white transition">中文</button>
+          <button onclick="setLanguage('en')" id="lang-en" class="lang-btn px-2.5 py-1 rounded-xl text-emerald-100 hover:text-white transition">EN</button>
+        </div>
+
+        <button onclick="scrollToGuide()" class="bg-emerald-800/80 hover:bg-emerald-900 text-yellow-300 px-3 py-1.5 rounded-2xl text-xs font-bold transition flex items-center gap-1 border border-emerald-500" id="btnGuide">
+          💡 Panduan / Guide
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 mt-6 space-y-8">
+
+    <!-- BANNER PANDUAN LANGKAH MEMINJAM (KIDS INSTRUCTION GUIDE) -->
+    <section id="guideSection" class="bg-amber-50 border-4 border-dashed border-amber-300 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+      <div class="flex items-center gap-3 border-b border-amber-200 pb-3">
+        <span class="text-3xl">🐻</span>
+        <div>
+          <h2 class="text-base sm:text-lg font-cute font-bold text-amber-900" id="guideTitle">Cara-cara Pinjam & Pulang Buku (Panduan Murid)</h2>
+          <p class="text-xs text-amber-700" id="guideSubtitle">Ikuti 3 langkah mudah di bawah untuk merekodkan buku anda!</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Step 1 -->
+        <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm flex flex-col items-center text-center space-y-2">
+          <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-cute font-bold flex items-center justify-center text-lg border border-emerald-300">
+            1
+          </div>
+          <h3 class="text-xs font-bold text-slate-800" id="step1Title">Pilih Mod (Action)</h3>
+          <p class="text-[11px] text-slate-500" id="step1Desc">Klik butang <span class="text-emerald-700 font-bold">"📥 Pinjam Buku"</span> atau <span class="text-amber-700 font-bold">"📤 Pulang Buku"</span>.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm flex flex-col items-center text-center space-y-2">
+          <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-cute font-bold flex items-center justify-center text-lg border border-emerald-300">
+            2
+          </div>
+          <h3 class="text-xs font-bold text-slate-800" id="step2Title">Isi Nama & Kelas</h3>
+          <p class="text-[11px] text-slate-500" id="step2Desc">Taip nama kamu, kelas, dan pilih tajuk buku yang kamu bawa.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-white p-4 rounded-2xl border border-amber-200 shadow-sm flex flex-col items-center text-center space-y-2">
+          <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-cute font-bold flex items-center justify-center text-lg border border-emerald-300">
+            3
+          </div>
+          <h3 class="text-xs font-bold text-slate-800" id="step3Title">Tekan Sahkan</h3>
+          <p class="text-[11px] text-slate-500" id="step3Desc">Tekan butang hijau besar di bawah untuk menyimpan rekod kamu! 🎉</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN FORM SECTION: BORROW & RETURN -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-emerald-200 cute-card space-y-6 relative overflow-hidden">
+      
+      <!-- Mode Selection Tabs (Pilih Mod) -->
+      <div class="space-y-2">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 text-center" id="lblStep1">Langkah 1: Sila Pilih Urusan Anda</label>
+        <div class="grid grid-cols-2 gap-4">
+          <button id="tabBorrow" type="button" onclick="switchMode('borrow')" class="py-4 px-4 rounded-2xl font-cute font-bold text-sm sm:text-base border-3 border-emerald-500 bg-emerald-500 text-white shadow-md btn-bounce flex items-center justify-center gap-2">
+            <span class="text-xl">📥</span> <span id="txtTabBorrow">Pinjam Buku</span>
+          </button>
+          <button id="tabReturn" type="button" onclick="switchMode('return')" class="py-4 px-4 rounded-2xl font-cute font-bold text-sm sm:text-base border-3 border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200 transition btn-bounce flex items-center justify-center gap-2">
+            <span class="text-xl">📤</span> <span id="txtTabReturn">Pulang Buku</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Inputs -->
+      <form id="actionForm" onsubmit="handleSubmit(event)" class="space-y-5 pt-2">
+        
+        <!-- Student Name & Class -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1" id="lblStudentName">
+              <span>👤</span> Nama Murid (Student Name):
+            </label>
+            <input type="text" id="inputStudentName" required placeholder="cth: Ahmad Bin Ali" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 text-sm font-semibold focus:outline-none focus:border-emerald-500 focus:bg-white transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1" id="lblStudentClass">
+              <span>🏫</span> Tahun / Kelas (Class):
+            </label>
+            <input type="text" id="inputStudentClass" required placeholder="cth: 3 Bestari" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 text-sm font-semibold focus:outline-none focus:border-emerald-500 focus:bg-white transition">
+          </div>
+        </div>
+
+        <!-- Book Selection -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1" id="lblSelectBook">
+            <span>📚</span> Pilih Buku (Select Book):
+          </label>
+          <select id="inputBookSelect" required onchange="updateSelectedBookPreview()" class="w-full bg-slate-50 border-2 border-slate-200 rounded-2xl p-3.5 text-sm font-bold text-slate-800 focus:outline-none focus:border-emerald-500 focus:bg-white transition">
+            <!-- Dynamic Options -->
+          </select>
+        </div>
+
+        <!-- Book Preview Card -->
+        <div id="bookPreviewCard" class="bg-emerald-50/60 border-2 border-emerald-200 rounded-2xl p-4 flex items-center gap-4">
+          <img id="previewCover" src="" class="w-16 h-20 object-cover rounded-xl shadow border border-emerald-200 flex-shrink-0">
+          <div class="space-y-1 overflow-hidden">
+            <span id="previewCategory" class="bg-emerald-200 text-emerald-800 text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider inline-block">Kategori</span>
+            <h4 id="previewTitle" class="text-sm font-bold text-slate-800 truncate">Judul Buku</h4>
+            <p id="previewAuthor" class="text-xs text-slate-500 truncate">Penulis</p>
+            <p id="previewStatus" class="text-[11px] font-bold text-emerald-700">Status: Ada di Rak ✅</p>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="btnSubmit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-cute font-bold text-base sm:text-lg rounded-2xl shadow-lg transition btn-bounce flex items-center justify-center gap-2 border-2 border-emerald-700">
+          ✨ Sahkan Rekod Pinjaman Buku
+        </button>
+      </form>
+    </section>
+
+    <!-- LIVE LOGS & REKOD PERPUSTAKAAN -->
+    <section class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-slate-200 cute-card space-y-4">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-4">
+        <div>
+          <h3 class="text-base font-cute font-bold text-slate-800 flex items-center gap-2" id="logSectionTitle">
+            <span>📜</span> Rekod Transaksi Terbaru (Borrow & Return Log)
+          </h3>
+          <p class="text-xs text-slate-500" id="logSectionSubtitle">Senarai rekod peminjaman dan pemulangan oleh murid-murid.</p>
+        </div>
+        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full" id="logCounter">
+          Total Rekod: 0
+        </span>
+      </div>
+
+      <!-- Table / Cards Log -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b text-slate-400 font-bold uppercase tracking-wider">
+              <th class="pb-3 px-2" id="thStudent">Murid & Kelas</th>
+              <th class="pb-3 px-2" id="thBook">Buku</th>
+              <th class="pb-3 px-2" id="thType">Jenis Rekod</th>
+              <th class="pb-3 px-2" id="thDate">Tarikh & Masa</th>
+            </tr>
+          </thead>
+          <tbody id="logTableBody" class="divide-y divide-slate-100 text-slate-700">
+            <!-- Dynamic Log Rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- POPUP MODAL SUKSES (SUCCESS POPUP) -->
+  <div id="successModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center space-y-5 shadow-2xl border-4 border-emerald-300 animate-bounce-short">
+      <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-4xl mx-auto border-4 border-emerald-300">
+        🎉
+      </div>
+      <div>
+        <h3 class="text-xl font-cute font-bold text-slate-800" id="modalTitle">Rekod Berjaya!</h3>
+        <p class="text-xs text-slate-500 mt-2 leading-relaxed" id="modalBody">
+          Terima kasih! Rekod peminjaman buku kamu telah disimpan. Selamat membaca! 📖
+        </p>
+      </div>
+      <button type="button" onclick="closeSuccessModal()" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-cute font-bold text-sm rounded-2xl shadow transition btn-bounce" id="btnModalClose">
+        Tutup & Kembali
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // System Current Language ('ms', 'zh', 'en')
+    let currentLang = 'ms';
+    let currentMode = 'borrow'; // 'borrow' or 'return'
+
+    // Multilingual Translations Dictionary
+    const i18n = {
+      ms: {
+        appTitle: "Pusat Impian Book Corner",
+        appSubtitle: "Stesen Self-Service Peminjaman & Pemulangan Buku 🐾",
+        btnGuide: "💡 Panduan / Guide",
+        guideTitle: "Cara-cara Pinjam & Pulang Buku (Panduan Murid)",
+        guideSubtitle: "Ikuti 3 langkah mudah di bawah untuk merekodkan buku anda!",
+        step1Title: "1. Pilih Mod",
+        step1Desc: "Klik '📥 Pinjam Buku' atau '📤 Pulang Buku'.",
+        step2Title: "2. Isi Nama & Kelas",
+        step2Desc: "Taip nama kamu, kelas, dan pilih tajuk buku yang kamu bawa.",
+        step3Title: "3. Tekan Sahkan",
+        step3Desc: "Tekan butang hijau di bawah untuk menyimpan rekod! 🎉",
+        lblStep1: "Langkah 1: Sila Pilih Urusan Anda",
+        txtTabBorrow: "Pinjam Buku",
+        txtTabReturn: "Pulang Buku",
+        lblStudentName: "👤 Nama Murid (Student Name):",
+        lblStudentClass: "🏫 Tahun / Kelas (Class):",
+        lblSelectBook: "📚 Pilih Buku (Select Book):",
+        btnSubmitBorrow: "✨ Sahkan Rekod Pinjaman Buku",
+        btnSubmitReturn: "🔄 Sahkan Rekod Pemulangan Buku",
+        logSectionTitle: "📜 Rekod Transaksi Terbaru (Borrow & Return Log)",
+        logSectionSubtitle: "Senarai rekod peminjaman dan pemulangan oleh murid-murid.",
+        thStudent: "Murid & Kelas",
+        thBook: "Buku",
+        thType: "Jenis Rekod",
+        thDate: "Tarikh & Masa",
+        modalTitleBorrow: "Pinjaman Berjaya! 📚",
+        modalBodyBorrow: "Terima kasih! Rekod peminjaman buku kamu telah disimpan. Selamat membaca!",
+        modalTitleReturn: "Pemulangan Berjaya! 🎉",
+        modalBodyReturn: "Buku telah berjaya dipulangkan ke sistem. Terima kasih kerana menjaga buku dengan baik!",
+        btnModalClose: "Tutup & Kembali",
+        statusAvailable: "Status: Ada di Rak ✅",
+        statusBorrowed: "Status: Sedang Dipinjam 📌",
+        typeBorrow: "📥 PINJAM",
+        typeReturn: "📤 PULANG",
+        noLogs: "Tiada rekod buat masa ini.",
+        totalRecords: "Total Rekod:"
+      },
+      zh: {
+        appTitle: "梦想阅读角图书借还系统",
+        appSubtitle: "自助式图书借阅与归还记录站 🐾",
+        btnGuide: "💡 使用指南 / Guide",
+        guideTitle: "借书与还书步骤（学生指南）",
+        guideSubtitle: "请按照以下 3 个简单步骤记录您的图书！",
+        step1Title: "1. 选择模式",
+        step1Desc: "点击 “📥 借阅图书” 或 “📤 归还图书”。",
+        step2Title: "2. 填写姓名与班级",
+        step2Desc: "输入您的姓名、班级，并选择您所拿的图书。",
+        step3Title: "3. 点击确认",
+        step3Desc: "点击下方的大绿色按钮保存您的记录！🎉",
+        lblStep1: "步骤 1：请选择操作类型",
+        txtTabBorrow: "借阅图书",
+        txtTabReturn: "归还图书",
+        lblStudentName: "👤 学生姓名 (Student Name):",
+        lblStudentClass: "🏫 年级 / 班级 (Class):",
+        lblSelectBook: "📚 选择图书 (Select Book):",
+        btnSubmitBorrow: "✨ 确认借阅图书",
+        btnSubmitReturn: "🔄 确认归还图书",
+        logSectionTitle: "📜 最新借还记录 (Borrow & Return Log)",
+        logSectionSubtitle: "学生借阅与归还图书的实时动态记录。",
+        thStudent: "学生与班级",
+        thBook: "图书名称",
+        thType: "记录类型",
+        thDate: "日期与时间",
+        modalTitleBorrow: "借阅成功！📚",
+        modalBodyBorrow: "谢谢！您的借书记录已成功保存，祝您阅读愉快！",
+        modalTitleReturn: "归还成功！🎉",
+        modalBodyReturn: "图书已成功归还至系统。感谢您爱护图书！",
+        btnModalClose: "关闭并返回",
+        statusAvailable: "状态：可借阅 ✅",
+        statusBorrowed: "状态：已借出 📌",
+        typeBorrow: "📥 借阅",
+        typeReturn: "📤 归还",
+        noLogs: "暂无借还记录。",
+        totalRecords: "总记录数:"
+      },
+      en: {
+        appTitle: "Dream Corner Library System",
+        appSubtitle: "Self-Service Book Borrow & Return Station 🐾",
+        btnGuide: "💡 User Guide",
+        guideTitle: "How to Borrow & Return Books (Student Guide)",
+        guideSubtitle: "Follow these 3 simple steps to record your book!",
+        step1Title: "1. Select Action",
+        step1Desc: "Click '📥 Borrow Book' or '📤 Return Book'.",
+        step2Title: "2. Enter Name & Class",
+        step2Desc: "Type your name, class, and select your book.",
+        step3Title: "3. Press Confirm",
+        step3Desc: "Press the green button below to save your record! 🎉",
+        lblStep1: "Step 1: Please Choose Action",
+        txtTabBorrow: "Borrow Book",
+        txtTabReturn: "Return Book",
+        lblStudentName: "👤 Student Name:",
+        lblStudentClass: "🏫 Grade / Class:",
+        lblSelectBook: "📚 Select Book:",
+        btnSubmitBorrow: "✨ Confirm Book Borrowing",
+        btnSubmitReturn: "🔄 Confirm Book Return",
+        logSectionTitle: "📜 Recent Transaction Logs",
+        logSectionSubtitle: "Real-time records of books borrowed and returned by students.",
+        thStudent: "Student & Class",
+        thBook: "Book Title",
+        thType: "Log Type",
+        thDate: "Date & Time",
+        modalTitleBorrow: "Borrow Successful! 📚",
+        modalBodyBorrow: "Thank you! Your book borrow record has been saved. Happy reading!",
+        modalTitleReturn: "Return Successful! 🎉",
+        modalBodyReturn: "Book returned successfully to the system. Thank you for taking good care of the book!",
+        btnModalClose: "Close & Return",
+        statusAvailable: "Status: Available on Shelf ✅",
+        statusBorrowed: "Status: Currently Borrowed 📌",
+        typeBorrow: "📥 BORROW",
+        typeReturn: "📤 RETURN",
+        noLogs: "No transaction records currently.",
+        totalRecords: "Total Records:"
+      }
+    };
+
+    // Vector SVG Book Covers Dictionary
+    const bookCovers = {
+      1: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23e8f5e9'/><rect x='12' y='12' width='276' height='396' fill='%23ffffff' rx='12' stroke='%23a5d6a7' stroke-width='3'/><circle cx='150' cy='150' r='60' fill='%23c8e6c9'/><text x='150' y='160' font-size='50' text-anchor='middle'>🤝</text><text x='150' y='250' font-family='Georgia, serif' font-weight='900' font-size='22' fill='%231b5e20' text-anchor='middle'>INILAH KAWAN-KAWAN</text><text x='150' y='280' font-family='Georgia, serif' font-weight='900' font-size='22' fill='%231b5e20' text-anchor='middle'>SAYA</text><rect x='60' y='305' width='180' height='26' rx='13' fill='%2381c784'/><text x='150' y='322' font-family='sans-serif' font-weight='bold' font-size='12' fill='%23ffffff' text-anchor='middle'>NORASHIKIN HASHIM</text></svg>",
+      2: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23fff3e0'/><rect x='12' y='12' width='276' height='396' fill='%23ffffff' rx='12' stroke='%23ffe0b2' stroke-width='3'/><circle cx='150' cy='150' r='60' fill='%23ffe0b2'/><text x='150' y='160' font-size='50' text-anchor='middle'>🌱</text><text x='150' y='240' font-family='Georgia, serif' font-weight='900' font-size='21' fill='%23e65100' text-anchor='middle'>BERBUAT BAIK</text><text x='150' y='270' font-family='Georgia, serif' font-weight='900' font-size='21' fill='%23e65100' text-anchor='middle'>DENGAN KAWAN</text><rect x='60' y='305' width='180' height='26' rx='13' fill='%23ffb74d'/><text x='150' y='322' font-family='sans-serif' font-weight='bold' font-size='12' fill='%23ffffff' text-anchor='middle'>NORASHIKIN HASHIM</text></svg>",
+      3: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23f1e96e'/><path d='M0 0 L300 0 L300 60 Q 150 110 0 50 Z' fill='%23d81b60'/><circle cx='150' cy='180' r='75' fill='%234caf50'/><ellipse cx='150' cy='180' rx='50' ry='60' fill='%232e7d32'/><text x='150' y='42' font-family='Georgia, serif' font-weight='900' font-size='22' fill='%23ffffff' text-anchor='middle'>Kenali Dunia Saya</text><text x='150' y='300' font-family='Georgia, serif' font-weight='900' font-size='40' fill='%233a1c0d' text-anchor='middle'>POKOK</text><text x='150' y='350' font-family='sans-serif' font-size='12' font-weight='bold' fill='%23333' text-anchor='middle'>Nazel Hashim Mohamad</text></svg>",
+      4: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23e0f2f1'/><rect x='12' y='12' width='276' height='396' fill='%23ffffff' rx='10' stroke='%2380cbd2' stroke-width='3'/><rect x='190' y='25' width='85' height='26' rx='13' fill='%2300bcd4'/><text x='232' y='42' font-family='sans-serif' font-weight='bold' font-size='11' fill='%23fff' text-anchor='middle'>TAHAP 1</text><text x='150' y='110' font-family='Georgia, serif' font-weight='900' font-size='19' fill='%23004d40' text-anchor='middle'>Hendak Seribu Daya,</text><rect x='25' y='125' width='250' height='36' rx='18' fill='%23ffb74d'/><text x='150' y='149' font-family='Georgia, serif' font-weight='900' font-size='17' fill='%23bf360c' text-anchor='middle'>Tak Nak Seribu Dalih</text><text x='150' y='230' font-size='60' text-anchor='middle'>📚</text><text x='150' y='360' font-family='sans-serif' font-weight='bold' font-size='13' fill='%231b5e20' text-anchor='middle'>Maslina Yusoff</text></svg>",
+      5: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23311b92'/><text x='150' y='90' font-family='Georgia, serif' font-style='italic' font-size='22' fill='%23ffe082' text-anchor='middle'>Koleksi Terpilih</text><text x='150' y='130' font-family='sans-serif' font-weight='900' font-size='26' fill='%23ffeb3b' text-anchor='middle'>CERITA RAKYAT</text><text x='150' y='170' font-family='sans-serif' font-weight='900' font-size='32' fill='%23ffffff' text-anchor='middle'>MALAYSIA</text><text x='150' y='250' font-size='60' text-anchor='middle'>🏛️</text><text x='150' y='355' font-family='sans-serif' font-size='11' fill='%23ffecb3' text-anchor='middle'>Penyelenggara / Penulis</text><text x='150' y='375' font-family='sans-serif' font-weight='bold' font-size='12' fill='%23fff' text-anchor='middle'>Mohammad Shahidan &amp; Rakan</text></svg>",
+      6: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23e0f2f1'/><rect x='12' y='12' width='276' height='396' fill='%23ffffff' rx='10' stroke='%2380cbc4' stroke-width='3'/><text x='150' y='75' font-family='Georgia, serif' font-size='16' font-weight='bold' fill='%2300897b' text-anchor='middle'>COUNSELLING FOR TOADS</text><text x='150' y='150' font-size='55' text-anchor='middle'>🐸</text><text x='150' y='250' font-family='sans-serif' font-weight='900' font-size='28' fill='%2300695c' text-anchor='middle'>蛤蟆先生</text><text x='150' y='290' font-family='sans-serif' font-weight='900' font-size='28' fill='%2300695c' text-anchor='middle'>去看心理医生</text><text x='150' y='350' font-family='sans-serif' font-size='12' fill='%23555' text-anchor='middle'>［英］罗伯特・戴博德 著</text></svg>",
+      7: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%230a3871'/><text x='150' y='65' font-family='Georgia, serif' font-size='22' font-weight='bold' fill='%23ffee58' text-anchor='middle'>The Little Prince</text><text x='150' y='140' font-family='sans-serif' font-weight='900' font-size='50' fill='%23ffffff' text-anchor='middle'>小王子</text><text x='150' y='240' font-size='65' text-anchor='middle'>👑</text><text x='150' y='360' font-family='sans-serif' font-size='12' fill='%2390caf9' text-anchor='middle'>［法］圣埃克苏佩里 著</text></svg>",
+      8: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 420'><rect width='300' height='420' fill='%23f5f5f5'/><rect x='12' y='12' width='276' height='396' fill='%23ffffff' rx='10' stroke='%23e0e0e0' stroke-width='3'/><text x='150' y='55' font-family='Georgia, serif' font-style='italic' font-size='18' fill='%23212121' text-anchor='middle'>The STORY of MY</text><text x='150' y='85' font-family='Georgia, serif' font-weight='bold' font-size='20' fill='%23212121' text-anchor='middle'>EXPERIMENTS WITH TRUTH</text><text x='150' y='210' font-size='60' text-anchor='middle'>👓</text><text x='150' y='310' font-family='Georgia, serif' font-weight='900' font-size='32' fill='%23111111' text-anchor='middle'>GANDHI</text><text x='150' y='340' font-family='sans-serif' font-weight='bold' font-size='12' fill='%23616161' text-anchor='middle'>AN AUTOBIOGRAPHY</text></svg>"
+    };
+
+    // Books Database (Full 8 books from the digital reading corner)
+    const booksDatabase = [
+      {
+        id: 1,
+        isBorrowed: false,
+        ms: { title: "Inilah Kawan-kawan Saya", author: "Norashikin Hashim", category: "Bahasa" },
+        zh: { title: "这就是我的朋友们", author: "Norashikin Hashim", category: "语言" },
+        en: { title: "These Are My Friends", author: "Norashikin Hashim", category: "Language" }
+      },
+      {
+        id: 2,
+        isBorrowed: false,
+        ms: { title: "Berbuat Baik dengan Kawan", author: "Norashikin Hashim", category: "Bahasa" },
+        zh: { title: "与朋友友善相处", author: "Norashikin Hashim", category: "语言" },
+        en: { title: "Being Kind to Friends", author: "Norashikin Hashim", category: "Language" }
+      },
+      {
+        id: 3,
+        isBorrowed: false,
+        ms: { title: "Kenali Dunia Saya: Pokok", author: "Nazel Hashim Mohamad", category: "Ilmu" },
+        zh: { title: "认识我的世界：树木", author: "Nazel Hashim Mohamad", category: "科学" },
+        en: { title: "Discover My World: Trees", author: "Nazel Hashim Mohamad", category: "Science" }
+      },
+      {
+        id: 4,
+        isBorrowed: false,
+        ms: { title: "Hendak Seribu Daya, Tak Nak Seribu Dalih", author: "Maslina Yusoff", category: "Cerita" },
+        zh: { title: "有志者事竟成", author: "Maslina Yusoff", category: "故事" },
+        en: { title: "Where There's a Will, There's a Way", author: "Maslina Yusoff", category: "Stories" }
+      },
+      {
+        id: 5,
+        isBorrowed: false,
+        ms: { title: "Koleksi Terpilih Cerita Rakyat Malaysia", author: "Mohammad Shahidan & Rakan", category: "Sejarah" },
+        zh: { title: "马来西亚民间故事精选集", author: "Mohammad Shahidan 等", category: "历史" },
+        en: { title: "Selected Malaysian Folklore", author: "Mohammad Shahidan et al.", category: "History" }
+      },
+      {
+        id: 6,
+        isBorrowed: false,
+        ms: { title: "蛤蟆先生去看心理医生 (Counselling for Toads)", author: "Robert de Board", category: "Psikologi" },
+        zh: { title: "蛤蟆先生去看心理医生", author: "罗伯特·戴博德", category: "心理" },
+        en: { title: "Counselling for Toads", author: "Robert de Board", category: "Psychology" }
+      },
+      {
+        id: 7,
+        isBorrowed: false,
+        ms: { title: "小王子 (The Little Prince)", author: "Antoine de Saint-Exupéry", category: "Cerita" },
+        zh: { title: "小王子", author: "安托万·德·圣-埃克苏佩里", category: "故事" },
+        en: { title: "The Little Prince", author: "Antoine de Saint-Exupéry", category: "Stories" }
+      },
+      {
+        id: 8,
+        isBorrowed: false,
+        ms: { title: "The Story of My Experiments with Truth", author: "M.K. Gandhi", category: "Sejarah" },
+        zh: { title: "甘地自传：我体验真理的故事", author: "甘地", category: "历史" },
+        en: { title: "The Story of My Experiments with Truth", author: "M.K. Gandhi", category: "History" }
+      }
+    ];
+
+    // Transaction Logs State
+    let transactionLogs = [
+      {
+        id: 101,
+        studentName: "Ahmad Bin Ali",
+        studentClass: "3 Bestari",
+        bookId: 1,
+        type: "borrow",
+        timestamp: "2026-10-24 09:30 AM"
+      },
+      {
+        id: 102,
+        studentName: "Siti Nurhaliza",
+        studentClass: "4 Cemerlang",
+        bookId: 3,
+        type: "borrow",
+        timestamp: "2026-10-24 10:15 AM"
+      }
+    ];
+
+    // Mark initial demo borrowed status
+    booksDatabase[0].isBorrowed = true;
+    booksDatabase[2].isBorrowed = true;
+
+    // Change Language Function
+    function setLanguage(lang) {
+      currentLang = lang;
+
+      // Toggle Active Button Styles
+      ['ms', 'zh', 'en'].forEach(l => {
+        const btn = document.getElementById(`lang-${l}`);
+        if (l === lang) {
+          btn.className = "lang-btn active px-2.5 py-1 rounded-xl transition";
+        } else {
+          btn.className = "lang-btn px-2.5 py-1 rounded-xl text-emerald-100 hover:text-white transition";
+        }
+      });
+
+      // Update static translations
+      const dict = i18n[lang];
+      document.getElementById('appTitle').textContent = dict.appTitle;
+      document.getElementById('appSubtitle').textContent = dict.appSubtitle;
+      document.getElementById('btnGuide').textContent = dict.btnGuide;
+      document.getElementById('guideTitle').textContent = dict.guideTitle;
+      document.getElementById('guideSubtitle').textContent = dict.guideSubtitle;
+      document.getElementById('step1Title').textContent = dict.step1Title;
+      document.getElementById('step1Desc').textContent = dict.step1Desc;
+      document.getElementById('step2Title').textContent = dict.step2Title;
+      document.getElementById('step2Desc').textContent = dict.step2Desc;
+      document.getElementById('step3Title').textContent = dict.step3Title;
+      document.getElementById('step3Desc').textContent = dict.step3Desc;
+      document.getElementById('lblStep1').textContent = dict.lblStep1;
+      document.getElementById('txtTabBorrow').textContent = dict.txtTabBorrow;
+      document.getElementById('txtTabReturn').textContent = dict.txtTabReturn;
+      document.getElementById('lblStudentName').textContent = dict.lblStudentName;
+      document.getElementById('lblStudentClass').textContent = dict.lblStudentClass;
+      document.getElementById('lblSelectBook').textContent = dict.lblSelectBook;
+      
+      document.getElementById('btnSubmit').textContent = currentMode === 'borrow' ? dict.btnSubmitBorrow : dict.btnSubmitReturn;
+      
+      document.getElementById('logSectionTitle').innerHTML = `<span>📜</span> ${dict.logSectionTitle}`;
+      document.getElementById('logSectionSubtitle').textContent = dict.logSectionSubtitle;
+      document.getElementById('thStudent').textContent = dict.thStudent;
+      document.getElementById('thBook').textContent = dict.thBook;
+      document.getElementById('thType').textContent = dict.thType;
+      document.getElementById('thDate').textContent = dict.thDate;
+      document.getElementById('btnModalClose').textContent = dict.btnModalClose;
+
+      // Populate Select Options and Refresh Previews & Logs
+      populateBookSelect();
+      updateSelectedBookPreview();
+      renderLogs();
+    }
+
+    // Populate Select Options (Ensures all 8 books are displayed across all languages)
+    function populateBookSelect() {
+      const select = document.getElementById('inputBookSelect');
+      const currentSelectedVal = select.value;
+      select.innerHTML = '';
+
+      booksDatabase.forEach(book => {
+        const langData = book[currentLang];
+        const option = document.createElement('option');
+        option.value = book.id;
+        
+        // Show clear status badge in select dropdown
+        const statusText = book.isBorrowed ? i18n[currentLang].statusBorrowed : i18n[currentLang].statusAvailable;
+        option.textContent = `${book.id}. ${langData.title} - (${langData.author}) [${statusText}]`;
+        
+        select.appendChild(option);
+      });
+
+      if (currentSelectedVal && booksDatabase.some(b => b.id == currentSelectedVal)) {
+        select.value = currentSelectedVal;
+      } else if (select.options.length > 0) {
+        select.selectedIndex = 0;
+      }
+    }
+
+    // Update Book Preview Card
+    function updateSelectedBookPreview() {
+      const bookId = parseInt(document.getElementById('inputBookSelect').value) || 1;
+      const book = booksDatabase.find(b => b.id === bookId) || booksDatabase[0];
+      const langData = book[currentLang];
+      const dict = i18n[currentLang];
+
+      document.getElementById('previewCover').src = bookCovers[book.id];
+      document.getElementById('previewTitle').textContent = langData.title;
+      document.getElementById('previewAuthor').textContent = langData.author;
+      document.getElementById('previewCategory').textContent = langData.category;
+
+      const statusEl = document.getElementById('previewStatus');
+      if (book.isBorrowed) {
+        statusEl.textContent = dict.statusBorrowed;
+        statusEl.className = "text-[11px] font-bold text-amber-700";
+      } else {
+        statusEl.textContent = dict.statusAvailable;
+        statusEl.className = "text-[11px] font-bold text-emerald-700";
+      }
+    }
+
+    // Switch Borrow / Return Mode
+    function switchMode(mode) {
+      currentMode = mode;
+      const tabBorrow = document.getElementById('tabBorrow');
+      const tabReturn = document.getElementById('tabReturn');
+      const btnSubmit = document.getElementById('btnSubmit');
+      const dict = i18n[currentLang];
+
+      if (mode === 'borrow') {
+        tabBorrow.className = "py-4 px-4 rounded-2xl font-cute font-bold text-sm sm:text-base border-3 border-emerald-500 bg-emerald-500 text-white shadow-md btn-bounce flex items-center justify-center gap-2";
+        tabReturn.className = "py-4 px-4 rounded-2xl font-cute font-bold text-sm sm:text-base border-3 border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200 transition btn-bounce flex items-center justify-center gap-2";
+        btnSubmit.textContent = dict.btnSubmitBorrow;
+        btnSubmit.className = "w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-cute font-bold text-base sm:text-lg rounded-2xl shadow-lg transition btn-bounce flex items-center justify-center gap-2 border-2 border-emerald-700";
+      } else {
+        tabReturn.className = "py-4 px-4 rounded-2xl font-cute font-bold text-sm sm:text-base border-3 border-amber-500 bg-amber-500 text-white shadow-md btn-bounce flex items-center justify-center gap-2";
+        tabBorrow.className = "py-4 px-4 rounded-2xl font-cute font-bold text-sm sm:text-base border-3 border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200 transition btn-bounce flex items-center justify-center gap-2";
+        btnSubmit.textContent = dict.btnSubmitReturn;
+        btnSubmit.className = "w-full py-4 bg-amber-600 hover:bg-amber-500 text-white font-cute font-bold text-base sm:text-lg rounded-2xl shadow-lg transition btn-bounce flex items-center justify-center gap-2 border-2 border-amber-700";
+      }
+
+      populateBookSelect();
+      updateSelectedBookPreview();
+    }
+
+    // Submit Form
+    function handleSubmit(event) {
+      event.preventDefault();
+      const studentName = document.getElementById('inputStudentName').value.trim();
+      const studentClass = document.getElementById('inputStudentClass').value.trim();
+      const bookId = parseInt(document.getElementById('inputBookSelect').value);
+      const book = booksDatabase.find(b => b.id === bookId);
+
+      if (!studentName || !studentClass || !book) return;
+
+      // Update book status
+      if (currentMode === 'borrow') {
+        book.isBorrowed = true;
+      } else {
+        book.isBorrowed = false;
+      }
+
+      // Add to log
+      const now = new Date();
+      const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      transactionLogs.unshift({
+        id: Date.now(),
+        studentName,
+        studentClass,
+        bookId,
+        type: currentMode,
+        timestamp: timeStr
+      });
+
+      // Refresh Form & Logs
+      populateBookSelect();
+      updateSelectedBookPreview();
+      renderLogs();
+
+      // Clear input fields
+      document.getElementById('inputStudentName').value = '';
+      document.getElementById('inputStudentClass').value = '';
+
+      // Show Modal
+      showSuccessModal(currentMode);
+    }
+
+    // Render Transaction Logs
+    function renderLogs() {
+      const tbody = document.getElementById('logTableBody');
+      const counter = document.getElementById('logCounter');
+      const dict = i18n[currentLang];
+
+      counter.textContent = `${dict.totalRecords} ${transactionLogs.length}`;
+      tbody.innerHTML = '';
+
+      if (transactionLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-400">${dict.noLogs}</td></tr>`;
+        return;
+      }
+
+      transactionLogs.forEach(log => {
+        const book = booksDatabase.find(b => b.id === log.bookId) || booksDatabase[0];
+        const langData = book[currentLang];
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+
+        const isBorrow = log.type === 'borrow';
+        const typeBadge = isBorrow 
+          ? `<span class="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-lg">${dict.typeBorrow}</span>`
+          : `<span class="bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-lg">${dict.typeReturn}</span>`;
+
+        tr.innerHTML = `
+          <td class="py-3 px-2 font-bold text-slate-800">
+            <div>${log.studentName}</div>
+            <div class="text-[10px] text-slate-400 font-medium">${log.studentClass}</div>
+          </td>
+          <td class="py-3 px-2 font-semibold text-slate-700">
+            ${langData.title}
+          </td>
+          <td class="py-3 px-2">
+            ${typeBadge}
+          </td>
+          <td class="py-3 px-2 text-slate-400 font-mono text-[10px]">
+            ${log.timestamp}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal Functions
+    function showSuccessModal(mode) {
+      const modal = document.getElementById('successModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      const dict = i18n[currentLang];
+
+      if (mode === 'borrow') {
+        modalTitle.textContent = dict.modalTitleBorrow;
+        modalBody.textContent = dict.modalBodyBorrow;
+      } else {
+        modalTitle.textContent = dict.modalTitleReturn;
+        modalBody.textContent = dict.modalBodyReturn;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.add('hidden');
+    }
+
+    function scrollToGuide() {
+      document.getElementById('guideSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initialize System on Load
+    window.onload = function() {
+      setLanguage('zh'); // 默认显示中文版，方便核对效果
+    };
+  </script>
+</body>
+</html>
